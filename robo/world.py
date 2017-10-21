@@ -1,6 +1,6 @@
 import math
 
-startPosition=(0.77, 0.0, -math.pi)
+startPosition=(0.5, 0.0, -math.pi)
 
 lines=[(0.0, 0.0, 0.0, 0.3),
        (-0.3, 0.0, -0.3, 0.3),
