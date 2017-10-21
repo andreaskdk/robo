@@ -1,5 +1,5 @@
 camera=False
-maxTime=3.0
+maxTime=4.0
 collectData=True
 
 tickTime=1.0
