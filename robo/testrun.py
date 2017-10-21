@@ -25,9 +25,12 @@ if __name__=="__main__":
                 time.sleep(remainingTickTime)
             tick=+1
 
+        m.setPower(0,0)
+
         if conf.collectData:
             dataDir=conf.dataBaseDir+"/data"+str(int(round(startTime*100)))
             os.mkdir(dataDir)
             with open(dataDir+"/tickTimes.csv", "w") as text_file:
                 for tickTime in tickTimes:
                     text_file.write(str(tickTime)+"\n")
+
