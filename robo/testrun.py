@@ -18,9 +18,9 @@ if __name__=="__main__":
 
     camera = PiCamera()
     camera.start_preview()
-    time.sleep(2)
+    time.sleep(1)
     camera.resolution = (320, 240)
-    camera.framerate = 48
+    camera.framerate = 30
 
     with move.Move() as m:
         tick=0
