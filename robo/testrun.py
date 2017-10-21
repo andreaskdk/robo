@@ -17,6 +17,7 @@ def doSense(tick, dataDir):
 if __name__=="__main__":
 
     camera = PiCamera()
+    camera.resolution = (320, 240)
 
     with move.Move() as m:
         tick=0
