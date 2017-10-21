@@ -17,7 +17,10 @@ def doSense(tick, dataDir):
 if __name__=="__main__":
 
     camera = PiCamera()
+    camera.start_preview()
+    time.sleep(2)
     camera.resolution = (320, 240)
+    camera.framerate = 48
 
     with move.Move() as m:
         tick=0
