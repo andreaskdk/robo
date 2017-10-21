@@ -38,7 +38,7 @@ if __name__=="__main__":
             remainingTickTime=tickStartTime+conf.tickTime-time.time()
             if remainingTickTime >0:
                 time.sleep(remainingTickTime)
-            tick=+1
+            tick+=1
 
         m.setPower(0,0)
 
