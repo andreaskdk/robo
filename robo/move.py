@@ -13,6 +13,7 @@ class Move:
         self.brick = nxt.find_one_brick(method=nxt.locator.Method(bluetooth=False))
         self.leftMotor=nxt.Motor(self.brick, nxt.PORT_C)
         self.rightMotor=nxt.Motor(self.brick, nxt.PORT_A)
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.rightMotor.run(0)
