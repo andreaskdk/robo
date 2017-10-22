@@ -35,7 +35,7 @@ if __name__=="__main__":
         while time.time()-startTime<conf.maxTime:
             tickStartTime=time.time()
             tickTimes.append(time.time())
-            doMove(m)
+            #doMove(m)
             doSense(tick, dataDir)
 
             remainingTickTime=tickStartTime+conf.tickTime-time.time()
