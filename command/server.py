@@ -6,6 +6,14 @@ import io
 
 
 app = Flask(__name__)
+camera = PiCamera()
+
+
+def initialize():
+    camera.start_preview()
+    time.sleep(1)
+    camera.resolution = (320, 240)
+    camera.framerate = 30
 
 @app.route('/currenttime')
 def current_time():
@@ -25,9 +33,5 @@ def current_image():
 
 
 if __name__=="__main__":
-
-    camera = PiCamera()
-    camera.start_preview()
-    time.sleep(1)
-    camera.resolution = (320, 240)
-    camera.framerate = 30
+    initialize()
+    app.run(host='0.0.0.0', port=5000)
