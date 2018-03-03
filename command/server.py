@@ -17,7 +17,7 @@ def initialize():
     camera.framerate = 30
     camera.start_preview()
     time.sleep(2)
-    t=tick(camera, None, configuration)
+    t=tick(camera, None)
 
 @app.route('/currenttime')
 def current_time():

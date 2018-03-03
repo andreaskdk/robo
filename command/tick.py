@@ -10,7 +10,7 @@ class tick(threading.Thread):
     move=None
     conf=None
 
-    def __init__(self, camera, move, conf):
+    def __init__(self, camera, move):
         self.camera=camera
         self.move=move
 
