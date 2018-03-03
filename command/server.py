@@ -4,20 +4,24 @@ import time
 from picamera import PiCamera
 import io
 from tick import tick
+from moving import Moving
 
 
 app = Flask(__name__)
 camera = PiCamera()
 t=None
+m=None
 
 
 def initialize():
     camera.resolution = (320, 240)
     camera.framerate = 30
     camera.start_preview()
+    m = Moving()
     time.sleep(2)
-    t=tick(camera, None)
+    t=tick(camera, m)
     t.run()
+
 
 @app.route('/currenttime')
 def current_time():
