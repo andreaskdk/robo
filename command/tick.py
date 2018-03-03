@@ -4,7 +4,7 @@ import configuration as conf
 
 class tick(threading.Thread):
 
-    tick=0
+    t=0
     tickTimes=[]
     camera=None
     move=None
@@ -15,7 +15,7 @@ class tick(threading.Thread):
         self.move=move
 
     def doSense(self):
-        print(tick)
+        print(self.t)
 
     def run(self):
         while True:
@@ -27,4 +27,4 @@ class tick(threading.Thread):
             remainingTickTime = tickStartTime + conf.tickTime - time.time()
             if remainingTickTime > 0:
                 time.sleep(remainingTickTime)
-            self.tick += 1
+            self.t += 1
