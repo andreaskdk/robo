@@ -1,5 +1,6 @@
 import threading
 import time
+import configuration as conf
 
 class tick(threading.Thread):
 
@@ -23,7 +24,7 @@ class tick(threading.Thread):
         # doMove(m)
         self.doSense()
 
-        remainingTickTime = tickStartTime + self.conf.tickTime - time.time()
+        remainingTickTime = tickStartTime + conf.tickTime - time.time()
         if remainingTickTime > 0:
             time.sleep(remainingTickTime)
         self.tick += 1
