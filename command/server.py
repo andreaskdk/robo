@@ -3,10 +3,13 @@ from flask import make_response
 import time
 from picamera import PiCamera
 import io
+import tick
+import configuration
 
 
 app = Flask(__name__)
 camera = PiCamera()
+t=None
 
 
 def initialize():
@@ -14,7 +17,7 @@ def initialize():
     camera.framerate = 30
     camera.start_preview()
     time.sleep(2)
-
+    t=tick(camera, None, configuration)
 
 @app.route('/currenttime')
 def current_time():
@@ -26,7 +29,6 @@ def current_image():
     camera.capture(image_stream, 'jpeg')
     response = make_response(image_stream.getvalue())
     response.headers.set('Content-Type', 'image/jpeg')
-
     return response
 
 
