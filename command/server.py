@@ -10,10 +10,11 @@ camera = PiCamera()
 
 
 def initialize():
-    camera.start_preview()
-    time.sleep(1)
     camera.resolution = (320, 240)
     camera.framerate = 30
+    camera.start_preview()
+    time.sleep(2)
+
 
 @app.route('/currenttime')
 def current_time():
