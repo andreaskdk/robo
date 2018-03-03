@@ -4,7 +4,6 @@ import time
 from picamera import PiCamera
 import io
 from tick import tick
-import configuration
 
 
 app = Flask(__name__)
@@ -18,6 +17,7 @@ def initialize():
     camera.start_preview()
     time.sleep(2)
     t=tick(camera, None)
+    t.run()
 
 @app.route('/currenttime')
 def current_time():

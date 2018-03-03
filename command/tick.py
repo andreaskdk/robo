@@ -14,17 +14,17 @@ class tick(threading.Thread):
         self.camera=camera
         self.move=move
 
-
     def doSense(self):
-        pass
+        print(tick)
 
     def run(self):
-        tickStartTime = time.time()
-        self.tickTimes.append(time.time())
-        # doMove(m)
-        self.doSense()
+        while True:
+            tickStartTime = time.time()
+            self.tickTimes.append(time.time())
+            # doMove(m)
+            self.doSense()
 
-        remainingTickTime = tickStartTime + conf.tickTime - time.time()
-        if remainingTickTime > 0:
-            time.sleep(remainingTickTime)
-        self.tick += 1
+            remainingTickTime = tickStartTime + conf.tickTime - time.time()
+            if remainingTickTime > 0:
+                time.sleep(remainingTickTime)
+            self.tick += 1
