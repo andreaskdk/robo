@@ -21,13 +21,11 @@ def current_time():
 
 @app.route('/currentimage.jpg')
 def current_image():
-    pid="img"
     image_stream = io.BytesIO()
     camera.capture(image_stream, 'jpeg')
     response = make_response(image_stream.getvalue())
     response.headers.set('Content-Type', 'image/jpeg')
-    response.headers.set(
-        'Content-Disposition', 'attachment', filename='currentimage.jpg')
+
     return response
 
 
