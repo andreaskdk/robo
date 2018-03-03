@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import send_file
+from flask import make_response
 import time
 from picamera import PiCamera
 import io
@@ -19,16 +19,16 @@ def initialize():
 def current_time():
     return str(time.time())
 
-@app.route('/currentimage')
+@app.route('/currentimage.jpg')
 def current_image():
     pid="img"
     image_stream = io.BytesIO()
     camera.capture(image_stream, 'jpeg')
-    return send_file(
-        image_stream,
-        mimetype='image/jpeg',
-        as_attachment=True,
-        attachment_filename='%s.jpg' % pid)
+    response = make_response(image_stream)
+    response.headers.set('Content-Type', 'image/jpeg')
+    response.headers.set(
+        'Content-Disposition', 'attachment', filename='currentimage.jpg')
+    return response
 
 
 
