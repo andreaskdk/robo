@@ -3,7 +3,7 @@ from flask import make_response
 import time
 from picamera import PiCamera
 import io
-import tick
+from tick import tick
 import configuration
 
 
