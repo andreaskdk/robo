@@ -20,7 +20,7 @@ def initialize():
     m = Moving()
     time.sleep(2)
     t=tick(camera, m)
-    t.run()
+    t.start()
 
 
 @app.route('/currenttime')
