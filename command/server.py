@@ -8,36 +8,48 @@ from moving import Moving
 
 
 app = Flask(__name__)
-camera = PiCamera()
-t=None
-m=None
+
+class DataServer:
+    camera = PiCamera()
+    t=None
+    m=None
 
 
-def initialize(t, m):
-    camera.resolution = (320, 240)
-    camera.framerate = 30
-    camera.start_preview()
-    m = Moving()
-    time.sleep(2)
-    t=tick(camera, m)
-    t.start()
+    def __init__(self):
+        self.camera.resolution = (320, 240)
+        self.camera.framerate = 30
+        self.camera.start_preview()
+        self.m = Moving()
+        time.sleep(2)
+        self.t=tick(self.camera, self.m)
+        self.t.start()
 
+    def current_time(self):
+        return str(time.time())
+
+    def current_image(self):
+        image_stream = io.BytesIO()
+        self.camera.capture(image_stream, 'jpeg')
+        response = make_response(image_stream.getvalue())
+        response.headers.set('Content-Type', 'image/jpeg')
+        return response
+
+    def stop(self):
+        self.t.stop()
+
+
+dataServer=DataServer()
 
 @app.route('/currenttime')
 def current_time():
-    return str(time.time())
+    return dataServer.current_time()
 
 @app.route('/currentimage.jpg')
 def current_image():
-    image_stream = io.BytesIO()
-    camera.capture(image_stream, 'jpeg')
-    response = make_response(image_stream.getvalue())
-    response.headers.set('Content-Type', 'image/jpeg')
-    return response
+    dataServer.current_image()
 
 
 
 if __name__=="__main__":
-    initialize(t, m)
     app.run(host='0.0.0.0', port=5000)
-    t.stop()
+    dataServer.stop()
