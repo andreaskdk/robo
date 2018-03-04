@@ -11,6 +11,7 @@ class tick(threading.Thread):
     conf=None
 
     def __init__(self, camera, move):
+        threading.Thread.__init__(self)
         self.camera=camera
         self.move=move
 
