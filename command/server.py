@@ -10,12 +10,9 @@ from moving import Moving
 app = Flask(__name__)
 
 class DataServer:
-    camera = PiCamera()
-    t=None
-    m=None
-
 
     def __init__(self):
+        self.camera = PiCamera()
         self.camera.resolution = (320, 240)
         self.camera.framerate = 30
         self.camera.start_preview()
