@@ -27,5 +27,6 @@ class tick(threading.Thread):
 
             remainingTickTime = tickStartTime + conf.tickTime - time.time()
             if remainingTickTime > 0:
+                print(remainingTickTime)
                 time.sleep(remainingTickTime)
             self.t += 1

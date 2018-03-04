@@ -15,7 +15,7 @@ class Moving(threading.Thread):
     motorPlan=[]
 
     def __init__(self):
-        pass
+        threading.Thread.__init__(self)
 
     def doMove(self):
         if len(self.motorPlan)==0:
