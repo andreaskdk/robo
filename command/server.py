@@ -13,7 +13,7 @@ t=None
 m=None
 
 
-def initialize():
+def initialize(t, m):
     camera.resolution = (320, 240)
     camera.framerate = 30
     camera.start_preview()
@@ -38,6 +38,6 @@ def current_image():
 
 
 if __name__=="__main__":
-    initialize()
+    initialize(t, m)
     app.run(host='0.0.0.0', port=5000)
     t.stop()
