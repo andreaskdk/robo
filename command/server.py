@@ -23,7 +23,7 @@ class DataServer:
         self.t=tick(self.camera, self.m)
         self.t.start()
         self.m.start()
-        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
+#        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
 
     def current_time(self):
         return str(time.time())
