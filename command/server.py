@@ -20,6 +20,8 @@ class DataServer:
         time.sleep(2)
         self.t=tick(self.camera, self.m)
         self.t.start()
+        self.m.start()
+        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
 
     def current_time(self):
         return str(time.time())
@@ -32,6 +34,7 @@ class DataServer:
         return response
 
     def stop(self):
+        self.m.stop()
         self.t.stop()
 
 
