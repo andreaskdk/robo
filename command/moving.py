@@ -28,9 +28,7 @@ class Moving(threading.Thread):
     def run(self):
         while not self.stopping:
             tickStartTime = time.time()
-            print("moving before move "+str(tickStartTime))
             self.doMove()
-            print("moving after move")
             remainingTickTime = tickStartTime + conf.miniTickTime - time.time()
             if remainingTickTime > 0:
                 time.sleep(remainingTickTime)
