@@ -54,7 +54,7 @@ def current_image():
 
 @app.route('/setcurrentplan', methods=['GET', 'POST'])
 def set_current_plan():
-    json=request.get_json()
+    json=request.values
     print(json)
     dataServer.set_current_plan(json['plan'])
 
