@@ -6,6 +6,7 @@ from picamera import PiCamera
 import io
 from tick import tick
 from moving import Moving
+import json
 
 
 app = Flask(__name__)
@@ -54,9 +55,9 @@ def current_image():
 
 @app.route('/setcurrentplan', methods=['GET', 'POST'])
 def set_current_plan():
-    json=request.values
-    print(json)
-    dataServer.set_current_plan(json['plan'])
+    values=request.values
+    print(values)
+    dataServer.set_current_plan(json.loads(values['plan']))
 
 if __name__=="__main__":
     app.run(host='0.0.0.0', port=5000)
