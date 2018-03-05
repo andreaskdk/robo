@@ -18,11 +18,11 @@ class DataServer:
         self.camera.resolution = (320, 240)
         self.camera.framerate = 30
         self.camera.start_preview()
-        self.m = Moving()
-        time.sleep(2)
-        self.t=tick(self.camera, self.m)
-        self.t.start()
-        self.m.start()
+#        self.m = Moving()
+#        time.sleep(2)
+#        self.t=tick(self.camera, self.m)
+#        self.t.start()
+#        self.m.start()
 #        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
 
     def current_time(self):
