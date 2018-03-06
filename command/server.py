@@ -20,7 +20,7 @@ class DataServer:
         camera.start_preview()
         self.m = Moving()
         time.sleep(2)
-        self.t=tick(self.camera, self.m)
+        self.t=tick(camera, self.m)
         self.t.start()
         self.m.start()
 #        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
