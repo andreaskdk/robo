@@ -36,7 +36,6 @@ def current_image():
     return response
 
 
-
 if __name__=="__main__":
     initialize()
     app.run(host='0.0.0.0', port=5000)
