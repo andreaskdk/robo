@@ -9,6 +9,7 @@ class tick(threading.Thread):
     camera=None
     move=None
     conf=None
+    stopping=False
 
     def __init__(self, camera, move):
         threading.Thread.__init__(self)
@@ -19,7 +20,7 @@ class tick(threading.Thread):
         print(self.t)
 
     def run(self):
-        while True:
+        while not self.stopping:
             tickStartTime = time.time()
             self.tickTimes.append(time.time())
             # doMove(m)
@@ -29,3 +30,6 @@ class tick(threading.Thread):
             if remainingTickTime > 0:
                 time.sleep(remainingTickTime)
             self.t += 1
+
+    def stop(self):
+        self.stopping=True
