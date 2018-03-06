@@ -3,26 +3,26 @@ from flask import make_response
 import time
 from picamera import PiCamera
 import io
-from tick import tick
-from moving import Moving
+#from tick import tick
+#from moving import Moving
 
 
 app = Flask(__name__)
 
 class DataServer:
     camera = PiCamera()
-    t=None
-    m=None
+    #t=None
+    #m=None
 
 
     def __init__(self):
         self.camera.resolution = (320, 240)
         self.camera.framerate = 30
         self.camera.start_preview()
-        self.m = Moving()
+        #self.m = Moving()
         time.sleep(2)
-        self.t=tick(self.camera, self.m)
-        self.t.start()
+        #self.t=tick(self.camera, self.m)
+        #self.t.start()
 
     def current_time(self):
         return str(time.time())
@@ -35,7 +35,8 @@ class DataServer:
         return response
 
     def stop(self):
-        self.t.stop()
+        pass
+        #self.t.stop()
 
 
 dataServer=DataServer()
