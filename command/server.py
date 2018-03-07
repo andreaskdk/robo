@@ -36,14 +36,12 @@ class DataServer:
         return str(time.time())
 
     def current_image(self):
-        try:
-            image_stream = io.BytesIO()
-            self.camera.capture(image_stream, 'jpeg')
-            response = make_response(image_stream.getvalue())
-            response.headers.set('Content-Type', 'image/jpeg')
-            return response
-        except:
-            traceback.print_exc()
+
+        image_stream = io.BytesIO()
+        self.camera.capture(image_stream, 'jpeg')
+        response = make_response(image_stream.getvalue())
+        response.headers.set('Content-Type', 'image/jpeg')
+        return response
 
     def set_current_plan(self, motorPlan):
         self.m.setMotorPlan(motorPlan)
@@ -66,7 +64,10 @@ def current_time():
 
 @app.route('/currentimage.jpg')
 def current_image():
-    dataServer.current_image()
+    try:
+        return dataServer.current_image()
+    except:
+        traceback.print_stack()
 
 @app.route('/setcurrentplan', methods=['GET', 'POST'])
 def set_current_plan():
