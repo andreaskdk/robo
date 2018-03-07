@@ -72,5 +72,5 @@ def set_current_plan():
     dataServer.set_current_plan(json.loads(values['plan']))
 
 if __name__=="__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=False)
+    app.run(host='0.0.0.0', port=5000, threaded=False)
     dataServer.stop()
