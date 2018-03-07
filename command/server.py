@@ -22,11 +22,11 @@ class DataServer:
             self.camera.framerate = 30
             self.camera.start_preview()
             self.m=None
-            #self.m = Moving()
+            self.m = Moving()
             time.sleep(2)
             self.t=tick(self.camera, self.m)
             self.t.start()
-            #self.m.start()
+            self.m.start()
     #        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
         except:
             print("FAILED")
@@ -52,8 +52,14 @@ class DataServer:
             self.camera.close()
         except:
             pass
-        #self.m.stop()
-        self.t.stop()
+        try:
+            self.m.stop()
+        except:
+            pass
+        try:
+            self.t.stop()
+        except:
+            pass
 
 
 dataServer=DataServer()
