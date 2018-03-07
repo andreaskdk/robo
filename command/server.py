@@ -8,20 +8,21 @@ from tick import tick
 from moving import Moving
 import json
 
-camera = PiCamera()
+
 
 app = Flask(__name__)
 
 class DataServer:
 
     def __init__(self):
-        camera.resolution = (320, 240)
-        camera.framerate = 30
-        camera.start_preview()
+        self.camera = PiCamera()
+        self.camera.resolution = (320, 240)
+        self.camera.framerate = 30
+        self.camera.start_preview()
         self.m=None
         #self.m = Moving()
         time.sleep(2)
-        self.t=tick(camera, self.m)
+        self.t=tick(self.camera, self.m)
         self.t.start()
         #self.m.start()
 #        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
@@ -31,7 +32,7 @@ class DataServer:
 
     def current_image(self):
         image_stream = io.BytesIO()
-        camera.capture(image_stream, 'jpeg')
+        self.camera.capture(image_stream, 'jpeg')
         response = make_response(image_stream.getvalue())
         response.headers.set('Content-Type', 'image/jpeg')
         return response
@@ -40,6 +41,8 @@ class DataServer:
         self.m.setMotorPlan(motorPlan)
 
     def stop(self):
+        self.camera.stop_preview()
+        self.camera.stop()
         #self.m.stop()
         self.t.stop()
 
