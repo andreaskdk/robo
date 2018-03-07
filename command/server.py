@@ -46,10 +46,13 @@ class DataServer:
         self.m.setMotorPlan(motorPlan)
 
     def stop(self):
-        self.camera.stop_preview()
-        self.camera.close()
+        try:
+            self.camera.stop_preview()
+            self.camera.close()
+        except:
+            pass
         #self.m.stop()
-        #self.t.stop()
+        self.t.stop()
 
 
 dataServer=DataServer()
