@@ -36,11 +36,14 @@ class DataServer:
         return str(time.time())
 
     def current_image(self):
-        image_stream = io.BytesIO()
-        self.camera.capture(image_stream, 'jpeg')
-        response = make_response(image_stream.getvalue())
-        response.headers.set('Content-Type', 'image/jpeg')
-        return response
+        try:
+            image_stream = io.BytesIO()
+            self.camera.capture(image_stream, 'jpeg')
+            response = make_response(image_stream.getvalue())
+            response.headers.set('Content-Type', 'image/jpeg')
+            return response
+        except:
+            traceback.print_exc()
 
     def set_current_plan(self, motorPlan):
         self.m.setMotorPlan(motorPlan)
