@@ -7,6 +7,7 @@ import io
 from tick import tick
 from moving import Moving
 import json
+import traceback
 
 
 
@@ -29,6 +30,7 @@ class DataServer:
     #        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
         except:
             print("FAILED")
+            traceback.print_exc()
 
     def current_time(self):
         return str(time.time())
@@ -45,9 +47,9 @@ class DataServer:
 
     def stop(self):
         self.camera.stop_preview()
-        self.camera.stop()
+        self.camera.close()
         #self.m.stop()
-        self.t.stop()
+        #self.t.stop()
 
 
 dataServer=DataServer()
