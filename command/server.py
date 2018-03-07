@@ -15,17 +15,20 @@ app = Flask(__name__)
 class DataServer:
 
     def __init__(self):
-        self.camera = PiCamera()
-        self.camera.resolution = (320, 240)
-        self.camera.framerate = 30
-        self.camera.start_preview()
-        self.m=None
-        #self.m = Moving()
-        time.sleep(2)
-        self.t=tick(self.camera, self.m)
-        self.t.start()
-        #self.m.start()
-#        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
+        try:
+            self.camera = PiCamera()
+            self.camera.resolution = (320, 240)
+            self.camera.framerate = 30
+            self.camera.start_preview()
+            self.m=None
+            #self.m = Moving()
+            time.sleep(2)
+            self.t=tick(self.camera, self.m)
+            self.t.start()
+            #self.m.start()
+    #        self.m.setMotorPlan([[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100],[100,100]])
+        except:
+            print("FAILED")
 
     def current_time(self):
         return str(time.time())
@@ -64,5 +67,5 @@ def set_current_plan():
     dataServer.set_current_plan(json.loads(values['plan']))
 
 if __name__=="__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True, threaded=False)
     dataServer.stop()
