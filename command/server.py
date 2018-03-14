@@ -23,7 +23,7 @@ class DataServer:
             self.camera.start_preview()
             self.m=None
             self.m = Moving()
-            time.sleep(2)
+            time.sleep(5)
             self.t=tick(self.camera, self.m)
             self.t.start()
             self.m.start()
