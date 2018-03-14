@@ -46,4 +46,4 @@ class Moving(threading.Thread):
         self.rightMotor.run(self.powerRight)
 
     def setMotorPlan(self, newMotorPlan):
-        self.motorPlan=reversed(newMotorPlan)
+        self.motorPlan=list(reversed(newMotorPlan))
