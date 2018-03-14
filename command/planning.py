@@ -2,10 +2,10 @@ import math
 
 moves=[{"motor": [0, 0], "delta": [0.0, 0.0, 0.0]},
        {"motor": [100, 100], "delta": [2.56, 0.0, 0.0]},
-       {"motor": [100, 70], "delta": [2.0, 0.0, 90.0/43.5/360*2*math.pi]},
-       {"motor": [70, 100], "delta": [2.0, 0.0, -90.0/43.5/360*2*math.pi]},
-       {"motor": [100, 80], "delta": [2.1, 0.0, 90.0/50/360*2*math.pi]},
-       {"motor": [80, 100], "delta": [2.1, 0.0, -90.0/50/360*2*math.pi]}]
+       {"motor": [70, 100], "delta": [2.0, 0.0, 90.0/43.5/360*2*math.pi]},
+       {"motor": [100, 70], "delta": [2.0, 0.0, -90.0/43.5/360*2*math.pi]},
+       {"motor": [80, 100], "delta": [2.1, 0.0, 90.0/50/360*2*math.pi]},
+       {"motor": [100, 80], "delta": [2.1, 0.0, -90.0/50/360*2*math.pi]}]
 
 def getPositions(path, startX, startY, startDir):
     positions=[]
