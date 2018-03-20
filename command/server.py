@@ -23,7 +23,11 @@ class DataServer:
             self.camera.framerate = 30
             self.camera.start_preview()
             self.m=None
-            self.m = Moving()
+            try:
+                self.m = Moving()
+            except:
+                print("Moving not possible")
+                self.m=None
             time.sleep(2)
             self.t=tick(self.camera, self.m)
             self.t.start()
