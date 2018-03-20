@@ -90,7 +90,10 @@ def set_current_plan():
 
 @app.route('/getdata')
 def get_data():
-    return dataServer.get_data()
+    try:
+        return dataServer.get_data()
+    except:
+        traceback.print_stack()
 
 if __name__=="__main__":
     app.run(host='0.0.0.0', port=5000, threaded=False)
