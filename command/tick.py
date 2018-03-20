@@ -1,6 +1,8 @@
 import threading
 import time
 import configuration as conf
+import io
+import base64
 
 class tick(threading.Thread):
 
@@ -10,6 +12,7 @@ class tick(threading.Thread):
     move=None
     conf=None
     stopping=False
+    mostRecentImageData=None
 
     def __init__(self, camera, move):
         threading.Thread.__init__(self)
@@ -17,7 +20,18 @@ class tick(threading.Thread):
         self.move=move
 
     def doSense(self):
-        print(self.t)
+        imageData={}
+        imageData["cameraStartTime"]=time.time()
+        image_stream = io.BytesIO()
+        self.camera.capture(image_stream, 'jpeg')
+        imageData["image"]=base64.b64encode(image_stream.getvalue())
+        imageData["cameraEndTime"]=time.time()
+        self.mostRecentImageData=imageData
+
+    def getData(self):
+        data={}
+        data["mostRecentImageData"]=self.mostRecentImageData
+        return data
 
     def run(self):
         while not self.stopping:

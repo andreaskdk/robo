@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import make_response
 from flask import request
+from flask import jsonify
 import time
 from picamera import PiCamera
 import io
@@ -23,7 +24,7 @@ class DataServer:
             self.camera.start_preview()
             self.m=None
             self.m = Moving()
-            time.sleep(5)
+            time.sleep(2)
             self.t=tick(self.camera, self.m)
             self.t.start()
             self.m.start()
@@ -36,12 +37,18 @@ class DataServer:
         return str(time.time())
 
     def current_image(self):
-
         image_stream = io.BytesIO()
         self.camera.capture(image_stream, 'jpeg')
         response = make_response(image_stream.getvalue())
         response.headers.set('Content-Type', 'image/jpeg')
         return response
+
+    def get_data(self):
+        data={}
+        data["startRequest"]=time.time()
+        data["data"]=self.t.getData()
+        data["endRequestTime"]=time.time()
+        return jsonify(data)
 
     def set_current_plan(self, motorPlan):
         self.m.setMotorPlan(motorPlan)
@@ -80,6 +87,10 @@ def set_current_plan():
     values=request.values
     print(values)
     dataServer.set_current_plan(json.loads(values['plan']))
+
+@app.route('getdata')
+def get_data():
+    return dataServer.get_data()
 
 if __name__=="__main__":
     app.run(host='0.0.0.0', port=5000, threaded=False)
