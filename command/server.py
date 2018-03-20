@@ -46,7 +46,7 @@ class DataServer:
     def get_data(self):
         data={}
         data["startRequest"]=time.time()
-        data["data"]=self.t.getData()
+        #data["data"]=self.t.getData()
         data["endRequestTime"]=time.time()
         return jsonify(data)
 
