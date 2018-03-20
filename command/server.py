@@ -88,7 +88,7 @@ def set_current_plan():
     print(values)
     dataServer.set_current_plan(json.loads(values['plan']))
 
-@app.route('getdata')
+@app.route('/getdata')
 def get_data():
     return dataServer.get_data()
 
