@@ -38,8 +38,9 @@ class tick(threading.Thread):
             tickStartTime = time.time()
             self.tickTimes.append(time.time())
             # doMove(m)
+            print("start sense: ", time.time())
             self.doSense()
-
+            print("end sense: ", time.time())
             remainingTickTime = tickStartTime + conf.tickTime - time.time()
             if remainingTickTime > 0:
                 print(remainingTickTime)
