@@ -38,7 +38,7 @@ class DataServer:
 
     def current_image(self):
         image_stream = io.BytesIO()
-        self.camera.capture(image_stream, 'jpeg')
+        self.camera.capture(image_stream, 'jpeg', use_video_port=True)
         response = make_response(image_stream.getvalue())
         response.headers.set('Content-Type', 'image/jpeg')
         return response

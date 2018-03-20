@@ -23,7 +23,7 @@ class tick(threading.Thread):
         imageData={}
         imageData["cameraStartTime"]=time.time()
         image_stream = io.BytesIO()
-        self.camera.capture(image_stream, 'jpeg')
+        self.camera.capture(image_stream, 'jpeg', use_video_port=True)
         imageData["image"]=base64.b64encode(image_stream.getvalue())
         imageData["cameraEndTime"]=time.time()
         self.mostRecentImageData=imageData
@@ -39,7 +39,7 @@ class tick(threading.Thread):
             self.tickTimes.append(time.time())
             # doMove(m)
             print("start sense: ", time.time())
-            self.doSense()
+            #self.doSense()
             print("end sense: ", time.time())
             remainingTickTime = tickStartTime + conf.tickTime - time.time()
             if remainingTickTime > 0:
