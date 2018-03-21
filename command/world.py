@@ -1,11 +1,16 @@
+import io
 import svgwrite
 import svgwrite.shapes
 import svgwrite.container
 import math
+import random
+import time
+
 import configuration
 import cv2
 import numpy as np
-
+from PIL import Image, ImageDraw
+import cairosvg
 
 class world:
     startingX=-13.5/2
@@ -15,14 +20,6 @@ class world:
     goalX=50.0
     goalY=50.0
     goalDir=math.pi/2
-
-    rTc=np.array([[1.0, 0.0, 0.0, 2.0],
-                  [0.0, 1.0, 0.0, -1.0],
-                  [0.0, 0.0, 1.0, 18.0],
-                  [0.0, 0.0, 0.0, 1.0]
-                  ])
-
-    cTr=np.linalg.inv(rTc)
 
     taperect=[]
 
@@ -40,6 +37,11 @@ class world:
         self.addVerticalTape(101.6-3.8, 0.0, 74.4)
         self.addHorizontalTape(74.4-3.8, 101.6-3.8-6.1, 101.6-3.8-6.1+16.5)
 
+        self.addHorizontalTape(27.4, 30.0, 30.0+17.0)
+        self.addHorizontalTape(51.0-3.8, 30.0, 30.0+17.0)
+        self.addVerticalTape(30.0, 27.4, 51.0)
+        self.addVerticalTape(30.0+17.0-3.8, 27.4, 51.0)
+
 
     def getRotation(self, thetaz):
         return np.array([
@@ -56,6 +58,17 @@ class world:
             [0.0, 0.0, 1.0, 0.0],
             [0.0, 0.0, 0.0, 1.0]
         ])
+
+    def getwTr(self, position):
+        return np.array([
+            [math.cos(position[2]), -math.sin(position[2]), 0.0, position[0]],
+            [math.sin(position[2]), math.cos(position[2]), 0.0, position[1]],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0]
+        ])
+
+    def getrTw(self, position):
+            return np.linalg.inv(self.getwTr(position))
 
     def getSVG(self, height=400, width=800):
         boundMinX, boundMinY, boundMaxX, boundMaxY=self.getBoundingBox()
@@ -78,80 +91,49 @@ class world:
         dwg.add(group)
         return dwg
 
-    def rotationMatrixToEulerAngles(self, R) :
-        sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
-        singular = sy < 1e-6
-        if  not singular :
-            x = math.atan2(R[2,1] , R[2,2])
-            y = math.atan2(-R[2,0], sy)
-            z = math.atan2(R[1,0], R[0,0])
-        else :
-            x = math.atan2(-R[1,2], R[1,1])
-            y = math.atan2(-R[2,0], sy)
-            z = 0
-        return np.array([x, y, z])
+    def W2C(self, p, position):
+        return configuration.cTr.dot(self.getrTw(position)).dot(p)
 
-    def yawpitchrolldecomposition(self, R):
-        sin_x    = math.sqrt(R[2,0] * R[2,0] +  R[2,1] * R[2,1])
-        validity  = sin_x < 1e-6
-        if not validity:
-            z1    = math.atan2(R[2,0], R[2,1])     # around z1-axis
-            x      = math.atan2(sin_x,  R[2,2])     # around x-axis
-            z2    = math.atan2(R[0,2], -R[1,2])    # around z2-axis
-        else: # gimbal lock
-            z1    = 0                                         # around z1-axis
-            x      = math.atan2(sin_x,  R[2,2])     # around x-axis
-            z2    = 0                                         # around z2-axis
-
-        return np.array([[z1], [x], [z2]])
-
-    def eulerAnglesToRotationMatrix(self, theta) :
-        R_x = np.array([[1,         0,                  0                   ],
-                        [0,         math.cos(theta[0]), -math.sin(theta[0]) ],
-                        [0,         math.sin(theta[0]), math.cos(theta[0])  ]
-                        ])
-        R_y = np.array([[math.cos(theta[1]),    0,      math.sin(theta[1])  ],
-                        [0,                     1,      0                   ],
-                        [-math.sin(theta[1]),   0,      math.cos(theta[1])  ]
-                        ])
-        R_z = np.array([[math.cos(theta[2]),    -math.sin(theta[2]),    0],
-                        [math.sin(theta[2]),    math.cos(theta[2]),     0],
-                        [0,                     0,                      1]
-                        ])
-        R = np.dot(R_z, np.dot( R_y, R_x ))
-        return R
-
-
-    def getCameraVectors(self, position):
-        camera_position=[position[0], position[1], -18.0]
-        rvec0=[ 1.32483378, -1.34834392, 1.08352354]
-        euler=self.rotationMatrixToEulerAngles( cv2.Rodrigues(np.array(rvec0))[0] )
-        euler[2]+=position[2]
-        #euler[0]-=position[2]
-        rotation = self.eulerAnglesToRotationMatrix(euler)
-        rvec=cv2.Rodrigues(rotation)[0]
-        tvec=-rotation.dot(camera_position)
-        return tvec, rvec
-
-    def floorBoxToWorldCoordinates(self, b):
+    def floorBoxToWorldCoordinates(self, b, position):
         wc=[]
-        wc.append([b[0], b[1], 0.0])
-        wc.append([b[2], b[1], 0.0])
-        wc.append([b[2], b[3], 0.0])
-        wc.append([b[0], b[3], 0.0])
+        wc.append(self.W2C(np.array([b[0], b[1], 0.0, 1.0]), position).tolist()[0:3])
+        wc.append(self.W2C(np.array([b[2], b[1], 0.0, 1.0]), position).tolist()[0:3])
+        wc.append(self.W2C(np.array([b[2], b[3], 0.0, 1.0]), position).tolist()[0:3])
+        wc.append(self.W2C(np.array([b[0], b[3], 0.0, 1.0]), position).tolist()[0:3])
         return wc
 
     def getProjectedSVG(self, pos, height=240, width=320):
-        dwg = svgwrite.Drawing('test.svg', profile='tiny')
-        dwg.add(svgwrite.shapes.Rect((0.0,0.0),(float(width*10), float(height*10))).stroke(color="#101010"))
-        tvec, rvec=self.getCameraVectors(pos)
+        dwg = svgwrite.Drawing(size=(width, height))
+        dwg.add(svgwrite.shapes.Rect((0.0,0.0),(float(width), float(height))).fill(color="#7f757a"))
+        tvec=np.array([0,0,0], dtype=float)
+        rvec=np.array([0,0,0], dtype=float)
+
         for b in self.taperect:
-            projected=cv2.projectPoints(np.array(self.floorBoxToWorldCoordinates(b)), rvec, tvec, configuration.camera_matrix, configuration.dist_coefs)[0]
+
+            projected=cv2.projectPoints(np.array(self.floorBoxToWorldCoordinates(b,pos)), rvec, tvec,
+                                        configuration.camera_matrix, configuration.dist_coefs)[0]
             points=[]
+            i=0
             for x in projected:
+                #print(i,([x[0][0], x[0][1]]))
                 points.append([x[0][0], x[0][1]])
-            dwg.add(svgwrite.shapes.Polygon(points).stroke(color="#00FF00"))
+            dwg.add(svgwrite.shapes.Polygon(points).stroke(color="#bec5bf").fill(color="#bec5bf"))
         return dwg
+
+    def drawOnImage(self, img, pos):
+        tvec=np.array([0,0,0], dtype=float)
+        rvec=np.array([0,0,0], dtype=float)
+        draw = ImageDraw.Draw(img)
+        for b in self.taperect:
+            projected=cv2.projectPoints(np.array(self.floorBoxToWorldCoordinates(b,pos)), rvec, tvec,
+                                        configuration.camera_matrix, configuration.dist_coefs)[0]
+            for i in range(len(projected)):
+                #print(i, (projected[i][0][0], projected[i][0][1],
+                #          projected[(i+1)%len(projected)][0][0], projected[(i+1)%len(projected)][0][1]))
+                draw.line((projected[i][0][0], projected[i][0][1],
+                           projected[(i+1)%len(projected)][0][0], projected[(i+1)%len(projected)][0][1]), fill=128)
+        del draw
+        return img
 
     def getBoundingBox(self):
         minX= float("inf")
@@ -184,6 +166,10 @@ class world:
 
         return [minX, minY, maxY, maxY]
 
+    def imageDiff(self, im1, im2):
+        imdiff=np.array(im1, dtype=float)-np.array(im2, dtype=float)
+        return sum(sum(sum(abs(imdiff))))
+
 if __name__=="__main__":
     w=world()
     #w.getProjectedSVG([-41.68129685, 3.91507777, 0.0]).saveas("perspective.svg", True)
@@ -191,9 +177,37 @@ if __name__=="__main__":
     #w.getProjectedSVG([-41.68129685, 3.91507777, 0.4]).saveas("perspective2.svg", True)
    # w.getProjectedSVG([-41.68129685, 3.91507777, 0.6]).saveas("perspective3.svg", True)
 
-    w.getProjectedSVG([0.0,0.0, 0.0]).saveas("perspective.svg", True)
-    w.getProjectedSVG([0.0,0.0, 0.2]).saveas("perspective1.svg", True)
-    w.getProjectedSVG([0.0,0.0, 0.4]).saveas("perspective2.svg", True)
-    w.getProjectedSVG([0.0,0.0, 0.6]).saveas("perspective3.svg", True)
+    #w.getProjectedSVG([-40.0,7.5, 0.0]).saveas("perspective.svg", True)
+    # w.getProjectedSVG([-40.0,7.5, 0.2]).saveas("perspective1.svg", True)
+    # w.getProjectedSVG([-40.0,7.5, 0.4]).saveas("perspective2.svg", True)
+    # w.getProjectedSVG([-40.0,7.5, 0.6]).saveas("perspective3.svg", True)
+    # w.getProjectedSVG([-40.0,7.5, 0.8]).saveas("perspective4.svg", True)
+    #w.getProjectedSVG([0.0,0.0, 0.2]).saveas("perspective1.svg", True)
+    #w.getProjectedSVG([0.0,0.0, 0.4]).saveas("perspective2.svg", True)
+    #w.getProjectedSVG([0.0,0.0, 0.6]).saveas("perspective3.svg", True)
 
+
+    im=w.drawOnImage(Image.open("../jupyter/currentimage_40_75.jpg"),[-40.02813321721587, 8.96339210197052, -0.030133771199697536])
+    im.save("drawedOn.png")
+
+    trueImage=Image.open("../jupyter/currentimage_40_75.jpg")
+    lowestDiff=float("inf")
+    bestPosition=None
+    startTime=time.time()
+    for i in range(1000):
+        position=[-40.0+(random.random()-0.5)*15,7.5+(random.random()-0.5)*15, 0.0+(random.random()-0.5)*0.8]
+        s=w.getProjectedSVG(position)
+        #print("svg: ",(time.time()-startTime))
+        #startTime=time.time()
+        image=Image.open(io.BytesIO(cairosvg.svg2png(s.tostring())))
+        #print("image: ",(time.time()-startTime))
+        #startTime=time.time()
+        diff=w.imageDiff(image, trueImage)
+        #print("diff: ",(time.time()-startTime))
+        #startTime=time.time()
+        if lowestDiff > diff:
+            lowestDiff=diff
+            bestPosition=position
+    print(time.time() - startTime)
+    print(bestPosition)
 
